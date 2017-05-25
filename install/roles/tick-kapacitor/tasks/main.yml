@@ -1,0 +1,24 @@
+---
+- name: Check if Kapacitor is already installed
+  command: dpkg-query -W kapacitor
+  register: kapacitor_check_deb
+  failed_when: kapacitor_check_deb.rc > 1
+  changed_when: kapacitor_check_deb.rc == 1
+
+- name: Download Kapacitor
+  get_url:
+    url: https://dl.influxdata.com/kapacitor/releases/kapacitor_1.3.0_amd64.deb
+    dest: /opt/kapacitor_1.3.0_amd64.deb
+    mode: 0440
+  when: kapacitor_check_deb == 1
+
+- name: Install Kapacitor
+  apt: 
+    deb: '/opt/kapacitor_1.3.0_amd64.deb'
+  when: kapacitor_check_deb.rc == 1
+
+- systemd:
+  name: kapacitor
+  state: reloaded
+  daemon_reload: yes
+

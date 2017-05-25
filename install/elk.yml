@@ -1,0 +1,34 @@
+---
+# https://qbox.io/blog/deploying-elk-stack-ansible-elasticsearch-kibana-logstash
+- hosts: elk
+  remote_user: user
+  become: yes
+  become_user: root
+  pre_tasks:
+    - shell: echo "Running pre-tasks"
+    - name: Remove default cdrom source
+      lineinfile:
+        dest: /home/mdtutorials2/remote_server.txt
+        regexp: '^deb cdrom:'
+        state: absent
+    - name: Installing apt https
+      apt:
+        name: apt-transport-https
+        update_cache: yes
+        state: present
+    - name: Add Elasticsearch apt-key
+      apt_key:
+        url: "https://packages.elastic.co/GPG-KEY-elasticsearch"
+        state: present
+    - name: Add Elastic apt source      
+      template:
+        src: kibanaAdmin.j2
+        dest: /etc/apt/sources.list.d/elastic-5.x.list
+  roles:
+    - { role: java }
+    - { role: elk-elasticsearch }
+    - { role: elk-kibana }
+    - { role: nginx }
+    - { role: elk-logstash }
+    
+    

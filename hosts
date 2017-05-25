@@ -1,0 +1,2 @@
+[elk]
+elk1 ansible_ssh_user=jvandevelde ansible_python_interpreter=/usr/bin/python
