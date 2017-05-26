@@ -1,0 +1,37 @@
+---
+- name: Check if Grafana is already installed
+  command: dpkg-query -W grafana
+  register: grafana_check_deb
+  failed_when: grafana_check_deb.rc > 1
+  changed_when: grafana_check_deb.rc == 1
+
+- name: Ensure dependencies are installed
+  apt: 
+    pkg: "{{ item }}" 
+    state: installed
+  with_items:
+    - adduser 
+    - libfontconfig
+
+- name: Download Grafana
+  get_url:
+    url: https://s3-us-west-2.amazonaws.com/grafana-releases/release/grafana_4.3.1_amd64.deb
+    dest: /opt/grafana_4.3.1_amd64.deb
+    mode: 0440
+  when: grafana_check_deb.rc == 1
+
+- name: Install Grafana
+  apt: 
+    deb: '/opt/grafana_4.3.1_amd64.deb'
+  when: grafana_check_deb.rc == 1
+
+- name: Config for Nginx reverse proxy
+  template:
+    src: grafana.ini.j2
+    dest: /etc/grafana/grafana.ini
+    force: yes
+
+- name: Restarting Grafana
+  service:
+    name: grafana-server
+    state: restarted

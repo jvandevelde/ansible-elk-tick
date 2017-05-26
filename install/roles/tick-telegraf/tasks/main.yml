@@ -10,7 +10,7 @@
     url: https://dl.influxdata.com/telegraf/releases/telegraf_1.3.0-1_amd64.deb
     dest: /opt/telegraf_1.3.0-1_amd64.deb
     mode: 0440
-  when: telegraf_check_deb == 1
+  when: telegraf_check_deb.rc == 1
 
 - name: Install Telegraf
   apt: 
@@ -18,8 +18,7 @@
   when: telegraf_check_deb.rc == 1
 
 - name: Restart Telegraf service
-  systemd:
+  service:
     name: telegraf
-    state: reloaded
-    daemon_reload: yes
+    state: restarted
 

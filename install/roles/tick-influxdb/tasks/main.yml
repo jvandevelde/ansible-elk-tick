@@ -10,15 +10,14 @@
     url: https://dl.influxdata.com/influxdb/releases/influxdb_1.2.4_amd64.deb
     dest: /opt/influxdb_1.2.4_amd64.deb
     mode: 0440
-  when: influxdb_check_deb == 1
+  when: influxdb_check_deb.rc == 1
 
 - name: Install InfluxDB
   apt: 
     deb: '/opt/influxdb_1.2.4_amd64.deb'
   when: influxdb_check_deb.rc == 1
 
-- systemd:
-  name: influxdb
-  state: reloaded
-  daemon_reload: yes
-
+- name: Restarting InfluxDB
+  service:
+    name: influxdb
+    state: restarted

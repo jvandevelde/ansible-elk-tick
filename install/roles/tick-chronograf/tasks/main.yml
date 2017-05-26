@@ -10,15 +10,21 @@
     url: https://dl.influxdata.com/chronograf/releases/chronograf_1.3.1.0_amd64.deb
     dest: /opt/chronograf_1.3.1.0_amd64.deb
     mode: 0440
-  when: chronograf_check_deb == 1
+  when: chronograf_check_deb.rc == 1
 
 - name: Install Chronograf
   apt: 
     deb: '/opt/chronograf_1.3.1.0_amd64.deb'
   when: chronograf_check_deb.rc == 1
 
-- systemd:
-  name: chronograf
-  state: reloaded
-  daemon_reload: yes
+- name: Configure chronograf service     
+  template:
+    src: chronograf.service.j2
+    dest: /lib/systemd/system/chronograf.service
+    force: yes # if contents are different, replace file even if it exists
+
+- name: Restarting Chronograf
+  service:
+    name: chronograf
+    state: restarted
 
