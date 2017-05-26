@@ -22,7 +22,7 @@ server {
        proxy_cache_bypass $http_upgrade;
    }
 
-   location /jupyter/ 
+   location /jupyter/ {
         proxy_pass            http://notebook;
         proxy_set_header      Host $host;
    }

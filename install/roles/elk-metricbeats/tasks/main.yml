@@ -1,0 +1,18 @@
+---
+- name: Update repositories cache and install Metricbeat
+  apt:
+    name: metricbeat
+    update_cache: yes
+
+#- name: Configuring metricbeat
+#  template:
+#    src: metricbeat.yml.j2
+#    dest: /etc/metricbeat/metricbeat.yml
+
+- name: Enabling Metricbeat service autostart on boot
+  shell: update-rc.d metricbeat defaults 95 10
+
+- name: Starting Metricbeat service
+  systemd:
+    name: metricbeat
+    state: restarted

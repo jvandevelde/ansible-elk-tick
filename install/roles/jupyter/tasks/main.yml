@@ -44,6 +44,13 @@
     - ipython-sql 
     - psycopg2 
 
+- name: Setup jupyter server configuration
+  template:
+    src: jupyter_notebook_config.py.j2
+    dest: {{ jupyter_root }}/jupyter_notebook_config.py
+    owner: {{ jupyter_user }}
+    group: {{ jupyter_group }}
+
 - name: Create service definition for jupyter
   template:
     src: jupyter.service.j2

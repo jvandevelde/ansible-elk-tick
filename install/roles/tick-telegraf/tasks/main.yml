@@ -1,0 +1,25 @@
+---
+- name: Check if Telegraf is already installed
+  command: dpkg-query -W telegraf
+  register: telegraf_check_deb
+  failed_when: telegraf_check_deb.rc > 1
+  changed_when: telegraf_check_deb.rc == 1
+
+- name: Download Telegraf
+  get_url:
+    url: https://dl.influxdata.com/telegraf/releases/telegraf_1.3.0-1_amd64.deb
+    dest: /opt/telegraf_1.3.0-1_amd64.deb
+    mode: 0440
+  when: telegraf_check_deb == 1
+
+- name: Install Telegraf
+  apt: 
+    deb: '/opt/telegraf_1.3.0-1_amd64.deb'
+  when: telegraf_check_deb.rc == 1
+
+- name: Restart Telegraf service
+  systemd:
+    name: telegraf
+    state: reloaded
+    daemon_reload: yes
+

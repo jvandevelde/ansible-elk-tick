@@ -16,4 +16,5 @@ elk_ip: 10.0.5.25
 
 jupyter_user: jupyter
 jupyter_group: jupyter
-jupyter_root: /etc/jupyter/notebook
+jupyter_root: /etc/jupyter
+jupyter_notebooks: /etc/jupyter/notebooks

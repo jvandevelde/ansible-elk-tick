@@ -1,0 +1,24 @@
+---
+- name: Check if Chronograf is already installed
+  command: dpkg-query -W chronograf
+  register: chronograf_check_deb
+  failed_when: chronograf_check_deb.rc > 1
+  changed_when: chronograf_check_deb.rc == 1
+
+- name: Download Chronograf
+  get_url:
+    url: https://dl.influxdata.com/chronograf/releases/chronograf_1.3.1.0_amd64.deb
+    dest: /opt/chronograf_1.3.1.0_amd64.deb
+    mode: 0440
+  when: chronograf_check_deb == 1
+
+- name: Install Chronograf
+  apt: 
+    deb: '/opt/chronograf_1.3.1.0_amd64.deb'
+  when: chronograf_check_deb.rc == 1
+
+- systemd:
+  name: chronograf
+  state: reloaded
+  daemon_reload: yes
+

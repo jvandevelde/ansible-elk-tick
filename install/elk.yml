@@ -8,7 +8,7 @@
     - shell: echo "Running pre-tasks"
     - name: Remove default cdrom source
       lineinfile:
-        dest: /home/mdtutorials2/remote_server.txt
+        dest: /etc/apt/sources.list
         regexp: '^deb cdrom:'
         state: absent
     - name: Installing apt https
@@ -22,13 +22,19 @@
         state: present
     - name: Add Elastic apt source      
       template:
-        src: kibanaAdmin.j2
+        src: ./elastic-apt-list.j2
         dest: /etc/apt/sources.list.d/elastic-5.x.list
   roles:
     - { role: java }
     - { role: elk-elasticsearch }
-    - { role: elk-kibana }
+    #- { role: elk-kibana }
+    #- { role: elk-logstash }
+    #- { role: tick-influxdb }
+    #- { role: tick-telegraf }
+    #- { role: tick-kapacitor }
+    #- { role: tick-chronograf }
     - { role: nginx }
-    - { role: elk-logstash }
+    #- { role: jupyter }
+    
     
     
