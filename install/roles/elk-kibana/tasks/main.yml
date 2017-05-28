@@ -4,12 +4,12 @@
     name: kibana
     update_cache: yes
 
-# Update kibana config file to only accept local connections
-- name: Updating the config file to restrict outside access
-  lineinfile:
-    destfile: /etc/kibana/kibana.yml
-    regexp: 'server.host:'
-    line: 'server.host: localhost'
+# Update kibana config file to only accept local connections and use nginx
+- name: Config for Nginx reverse proxy
+  template:
+    src: kibana.yml.j2
+    dest: /etc/kibana/kibana.yml
+    force: yes
 
 # Enable Kibana service
 - name: Enabling Kibana service
