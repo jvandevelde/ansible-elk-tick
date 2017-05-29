@@ -11,18 +11,11 @@
     state: present
     update_cache: yes
 
-# Create /etc/nginx/conf.d/ directory
-- name: Create nginx directory structure
-  file: 
-    path: /etc/nginx/conf.d
-    state: directory
-    mode: 0755
-
 # Deploy kibana.conf with FQDN
 - name: Setup Nginx reverse proxy for kibana
   template:
     src: sites.conf.j2
-    dest: /etc/nginx/conf.d/elk-tick-demo.conf
+    dest: /etc/nginx/sites-enabled/elk-tick-demo.conf
     force: yes
     owner: root
     group: root

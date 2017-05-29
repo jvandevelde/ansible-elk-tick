@@ -25,17 +25,19 @@
         src: ./elastic-apt-list.j2
         dest: /etc/apt/sources.list.d/elastic-5.x.list
   roles:
-    #- { role: java }
-    #- { role: elk-elasticsearch }
-    #- { role: elk-kibana }
-    #- { role: elk-logstash }
-    #- { role: tick-influxdb }
-    #- { role: tick-telegraf }
-    #- { role: tick-kapacitor }
-    #- { role: tick-chronograf }
+    - { role: java }
+    - { role: elk-elasticsearch }
+    - { role: elk-kibana }
+    - { role: elk-logstash }
+    - { role: tick-influxdb }
+    - { role: tick-telegraf }
+    - { role: tick-kapacitor }
+    - { role: tick-chronograf }
     - { role: grafana }
+    - { role: jupyter }
     - { role: nginx }
-    #- { role: jupyter }
+    - { role: elk-metricbeat }
+    - { role: elk-filebeat }
 
     
     

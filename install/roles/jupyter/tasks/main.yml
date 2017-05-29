@@ -6,13 +6,13 @@
 
 - name: Add Jupyter user
   user: 
-    name: {{ jupyter_user }}
-    group: {{ jupyter_group }}
-    home: {{ jupyter_root }}
+    name: "{{ jupyter_user }}"
+    group: "{{ jupyter_group }}"
+    home: "{{ jupyter_root }}"
 
 - name: Ensure Basic Packages installed
   apt: 
-    pkg: {{ item }} 
+    pkg: "{{ item }}"
     state: installed
   with_items:
   - python3
@@ -27,13 +27,12 @@
   - python3-pandas
   - python3-psycopg2
   - libpq-dev
-  - postgresql-server-dev-9.3
 
 #- command: pip3 install setuptools --upgrade
 #- command: pip3 install --upgrade ipython[all] jupyter[all] jupyter_core jinja2 zmq tornado jsonschema pandas ipython-sql psycopg2
 - name: Install jupyter via pip
   pip:
-    name: {{ item }}
+    name: "{{ item }}"
     executable: pip3
     extra_args: --upgrade
   with_items:
@@ -43,13 +42,22 @@
     - pandas 
     - ipython-sql 
     - psycopg2 
+    - influxdb
 
 - name: Setup jupyter server configuration
   template:
     src: jupyter_notebook_config.py.j2
-    dest: {{ jupyter_root }}/jupyter_notebook_config.py
-    owner: {{ jupyter_user }}
-    group: {{ jupyter_group }}
+    dest: "{{ jupyter_root }}/jupyter_notebook_config.py"
+    owner: "{{ jupyter_user }}"
+    group: "{{ jupyter_group }}"
+
+- name: Create Notebook directory
+  file: 
+    path: "{{ jupyter_notebooks }}"
+    state: directory
+    mode: 0755
+    owner: "{{ jupyter_user }}"
+    group: "{{ jupyter_group }}"
 
 - name: Create service definition for jupyter
   template:

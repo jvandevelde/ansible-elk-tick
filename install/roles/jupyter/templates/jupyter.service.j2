@@ -4,7 +4,7 @@ Description=Jupyter Notebook
 [Service]
 Type=simple
 PIDFile=/run/jupyter.pid
-ExecStart=/usr/local/bin/jupyter --no-browser --config={{ jupyter_root }}/jupyter_notebook_config.py
+ExecStart=/usr/local/bin/jupyter notebook --no-browser --config={{ jupyter_root }}/jupyter_notebook_config.py
 User={{ jupyter_user }}
 Group={{ jupyter_group }}
 WorkingDirectory={{ jupyter_notebooks }}

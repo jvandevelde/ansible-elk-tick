@@ -4,13 +4,19 @@
     name: metricbeat
     update_cache: yes
 
-#- name: Configuring metricbeat
-#  template:
-#    src: metricbeat.yml.j2
-#    dest: /etc/metricbeat/metricbeat.yml
+- name: Configuring metricbeat
+  template:
+    src: metricbeat.yml.j2
+    dest: /etc/metricbeat/metricbeat.yml
+    owner: root
+    group: root
+    mode: 0744
 
 - name: Enabling Metricbeat service autostart on boot
   shell: update-rc.d metricbeat defaults 95 10
+
+- name: Import the sample kibana dashboards
+  shell: /usr/share/metricbeat/scripts/import_dashboards
 
 - name: Starting Metricbeat service
   systemd:
