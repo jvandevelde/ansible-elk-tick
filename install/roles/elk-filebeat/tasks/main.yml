@@ -4,10 +4,10 @@
     name: filebeat
     update_cache: yes
 
-#- name: Configuring Filebeat
-#  template:
-#    src: filebeat.yml.j2
-#    dest: /etc/filebeat/filebeat.yml
+- name: Configuring Filebeat
+  template:
+    src: filebeat.yml
+    dest: /etc/filebeat/filebeat.yml
 
 - name: Enabling Filebeat service autostart on boot
   shell: update-rc.d filebeat defaults 95 10

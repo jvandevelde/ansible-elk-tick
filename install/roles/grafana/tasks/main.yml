@@ -34,4 +34,5 @@
 - name: Restarting Grafana
   service:
     name: grafana-server
+    enabled: yes
     state: restarted

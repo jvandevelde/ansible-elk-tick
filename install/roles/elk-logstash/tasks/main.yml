@@ -25,13 +25,13 @@
   shell: "openssl req -config /etc/ssl/openssl.cnf -x509 -days 3650 -batch -nodes -newkey rsa:2048 -keyout /etc/pki/tls/private/logstash-forwarder.key -out /etc/pki/tls/certs/logstash-forwarder.crt"
 
 
-- name: Configure External Beats configuration file
-  template:
-    src: external-filebeats-input.conf.j2
-    dest: /etc/logstash/conf.d/02-external-beats-input.conf
-    owner: root
-    group: root
-    mode: 0644
+#- name: Configure External Beats configuration file
+  #template:
+  #  src: external-filebeats-input.conf.j2
+  #  dest: /etc/logstash/conf.d/02-external-beats-input.conf
+  #  owner: root
+  #  group: root
+  #  mode: 0644
 
 - name: Configure Internal Beats configuration file
   template:

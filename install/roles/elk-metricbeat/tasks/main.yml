@@ -19,6 +19,7 @@
   shell: /usr/share/metricbeat/scripts/import_dashboards
 
 - name: Starting Metricbeat service
-  systemd:
+  service:
     name: metricbeat
+    enabled: yes
     state: restarted

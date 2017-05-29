@@ -11,11 +11,9 @@
     regexp: 'network.host:'
     line: 'network.host: localhost'
 
-- name: Ensure ES starts at boot
-  shell: systemctl enable elasticsearch.service
-  
 # Restart Elasticsearch
 - name: Restarting Elasticsearch
   service:
     name: elasticsearch
+    enabled: yes
     state: restarted

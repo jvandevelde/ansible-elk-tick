@@ -12,7 +12,7 @@
 filebeat.modules:
 
 #------------------------------- System Module -------------------------------
-#- module: system
+- module: system
   # Syslog
   syslog:
     enabled: true
@@ -96,7 +96,7 @@ filebeat.modules:
     #prospector:
 
 #-------------------------------- Nginx Module -------------------------------
-#- module: nginx
+- module: nginx
   # Access logs
   access:
     enabled: true
@@ -108,7 +108,7 @@ filebeat.modules:
 
     # Set custom paths for the log files. If left empty,
     # Filebeat will choose the paths depending on your OS.
-    #var.paths:
+    var.paths: ["/var/log/nginx/access.log"]
 
     # Prospector configuration (advanced). Any prospector configuration option
     # can be added under this section.
@@ -120,7 +120,7 @@ filebeat.modules:
 
     # Set custom paths for the log files. If left empty,
     # Filebeat will choose the paths depending on your OS.
-    #var.paths:
+    var.paths: ["/var/log/nginx/error.log"]
 
     # Prospector configuration (advanced). Any prospector configuration option
     # can be added under this section.
@@ -439,7 +439,7 @@ filebeat.prospectors:
 # Multiple outputs may be used.
 
 #-------------------------- Elasticsearch output -------------------------------
-output.elasticsearch:
+#output.elasticsearch:
   # Boolean flag to enable or disable the output module.
   #enabled: true
 
@@ -565,7 +565,7 @@ output.elasticsearch:
 
 
 #----------------------------- Logstash output ---------------------------------
-#output.logstash:
+output.logstash:
   # Boolean flag to enable or disable the output module.
   enabled: true
 

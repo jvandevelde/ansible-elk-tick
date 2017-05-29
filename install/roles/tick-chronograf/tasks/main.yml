@@ -27,4 +27,5 @@
   service:
     name: chronograf
     state: restarted
+    enabled: yes
 

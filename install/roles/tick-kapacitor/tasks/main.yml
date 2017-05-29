@@ -21,3 +21,4 @@
   service:
     name: kapacitor
     state: restarted
+    enabled: yes
