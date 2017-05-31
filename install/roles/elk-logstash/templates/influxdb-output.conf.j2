@@ -1,0 +1,20 @@
+output {
+    influxdb {
+        host => "localhost"
+        port => 8086
+        db => "logstash-statistics"
+
+        data_points => {
+            "events" => 1
+            "visitor" => 1
+            "lead" => 0
+            "category" => "%{[category]}"
+            "host" => "%{[host]}"
+        }
+        coerce_values => {
+            "events" => "integer"
+            "visitor" => "integer"
+            "lead"    => "integer"
+        }
+    }
+}

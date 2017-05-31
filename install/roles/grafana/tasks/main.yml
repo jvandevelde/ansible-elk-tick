@@ -31,6 +31,30 @@
     dest: /etc/grafana/grafana.ini
     force: yes
 
+- name: Create InfluxDB default datasource
+  uri: 
+    url: "http://{{ server_name }}/grafana/api/datasources"
+    method: POST
+    return_content: yes
+    HEADER_Content-Type: "application/json"
+    body: "{{ lookup('template','influxdb.datasource.json.j2') }}"
+    body_format: json
+    user: "admin"
+    password: "admin"
+  ignore_errors: yes
+
+    
+- name: Create InfluxDB default datasource
+  uri: 
+    url: "http://{{ server_name }}/grafana/api/dashboards/db"
+    method: POST
+    return_content: yes
+    HEADER_Content-Type: "application/json"
+    body: "{{ lookup('template','system-metrics-dashboard.json.j2') }}"
+    body_format: json
+    user: "admin"
+    password: "admin"
+
 - name: Restarting Grafana
   service:
     name: grafana-server

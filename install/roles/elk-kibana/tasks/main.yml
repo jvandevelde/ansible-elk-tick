@@ -11,15 +11,9 @@
     dest: /etc/kibana/kibana.yml
     force: yes
 
-# Enable Kibana service
-- name: Enabling Kibana service
-  systemd:
-    name: kibana
-    enabled: yes
-    daemon_reload: yes
-
 # Start Kibana service
 - name: Starting Kibana service
   systemd:
     name: kibana
-    state: started
+    enabled: yes
+    state: restarted

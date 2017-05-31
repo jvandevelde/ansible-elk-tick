@@ -15,4 +15,5 @@
 - name: Starting Filebeat service
   systemd:
     name: filebeat
+    enabled: yes
     state: restarted

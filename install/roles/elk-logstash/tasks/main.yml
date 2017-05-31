@@ -1,4 +1,10 @@
 ---
+- name: Check if Logstash is already installed
+  command: dpkg-query -W logstash
+  register: logstash_check_deb
+  failed_when: logstash_check_deb.rc > 1
+  changed_when: logstash_check_deb.rc == 1
+
 - name: Update repositories cache and install Logstash
   apt:
     name: logstash
@@ -57,13 +63,31 @@
     group: root
     mode: 0644
 
+- name: Configure InfluxDB output file
+  template:
+    src: influxdb-output.conf.j2
+    dest: /etc/logstash/conf.d/29-influxdb-output.conf
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Configure event metric filter with built-in InfluxDB output file
+  template:
+    src: event-metric-filter-to-influxdb.conf.j2
+    dest: /etc/logstash/conf.d/11-event-metric-filter-to-influxdb.conf
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Install InfluxDB output plugin
+  shell: /usr/share/logstash/bin/logstash-plugin install logstash-output-influxdb
+  # TODO: Change this to when the plugin isn't installed, not just when logstash isn't installed
+  when: logstash_check_deb.rc == 1
+
 - name: Start Logstash service
   systemd:
     name: logstash
-    state: started
-    daemon_reload: yes
-
-- name: Enable Logstash service
-  systemd:
-    name: logstash
+    state: restarted
     enabled: yes
+    
+
