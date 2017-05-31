@@ -23,6 +23,14 @@
     dest: /lib/systemd/system/chronograf.service
     force: yes # if contents are different, replace file even if it exists
 
+- name: Copy settings database for demo dashboards
+  copy:
+    src: chronograf-v1.db
+    dest: /var/lib/chronograf/
+    owner: chronograf
+    group: chronograf
+    mode: 0644
+
 - name: Restarting Chronograf
   service:
     name: chronograf
