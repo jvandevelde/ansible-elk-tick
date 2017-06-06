@@ -1,0 +1,38 @@
+---
+# https://medium.com/@tedchength/installing-docker-using-ansible-script-c182787f2fa1
+- name: install docker
+  command: apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys 58118E89F3A912897C070ADBF76221572C52609D
+
+- name: add deb repo
+  command: touch /etc/apt/sources.list.d/docker.list
+
+- lineinfile: 
+    dest: "/etc/apt/sources.list.d/docker.list" 
+    line: "{{item}}"
+  with_items:
+    - "deb https://apt.dockerproject.org/repo ubuntu-xenial main"
+
+- name: apt update
+  apt: 
+    update_cache: yes
+
+- apt: 
+    name: docker-engine 
+    state: present
+
+- name: setup Action User
+  user: 
+    generate_ssh_key: yes 
+    name: "{{ docker_user }}"
+    password: "{{ docker_user_pw | password_hash('sha512') }}"
+    shell: /bin/bash
+
+- name: add user mod
+  command: usermod -aG docker {{ remote_user }}
+
+- name: add user mod
+  command: usermod -aG docker {{ docker_user }}
+
+- name: Create a network for the ELK stack
+  docker_network:
+    name: elk_network

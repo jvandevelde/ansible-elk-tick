@@ -1,0 +1,11 @@
+---
+- hosts: docker              
+  remote_user: "{{remote_user}}" 
+  become: yes
+  become_user: root
+  become_method: sudo
+  serial: 1          # actions will be done serially
+  roles:
+    - { role: docker }
+    - { role: elk-docker-elasticsearch }
+    - { role: elk-docker-curator }

@@ -1,0 +1,21 @@
+---
+- name: Make sure docker-py is installed
+  pip:
+    name: "{{ item }}"
+    executable: pip
+    extra_args: --upgrade
+  with_items:
+    - docker-py
+
+
+- name: Create a Elasticsearch container
+  docker_container:
+    name: es1
+    image: elasticsearch:5.4-alpine
+    ports:
+      - "9201:9200"
+    networks:
+      - name: elk_network
+    #env:
+    #    http.host: "0.0.0.0"
+    #    transport.host: "127.0.0.1"

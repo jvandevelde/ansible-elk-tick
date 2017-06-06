@@ -1,0 +1,33 @@
+---
+- name: Install docker-py via pip
+  pip:
+    name: "{{ item }}"
+    executable: pip
+    extra_args: --upgrade
+  with_items:
+    - docker-py
+
+- name: Make sure that the configuration file is on the host befor volume sharing
+  copy:
+    src: curator.yml
+    dest: /etc/curator
+    
+- name: Make sure that the action file is on the host before volume sharing
+  copy:
+    src: curator-actions.yml
+    dest: /etc/curator
+
+- name: Create a Elastic Curator container
+  docker_container:
+    name: elastic-curator2
+    image: bobrik/curator:5.0.1
+    command: --config /tmp/curator.yml /tmp/curator-actions.yml
+    volumes: /etc/curator:/tmp
+    networks:
+      - name: elk_network
+
+- cron:
+    name: "Run Curator"
+    minute: "0"
+    hour: "23"  # 11 PM daily
+    job: "docker start elastic-curator"

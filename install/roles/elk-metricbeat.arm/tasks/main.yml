@@ -18,7 +18,7 @@
 
 - name: Check if Metricbeat already downloaded
   stat: 
-    path: /opt/filebeat/metricbeat-linux-arm
+    path: /opt/metricbeat/metricbeat-linux-arm
   register: metricbeat_st
 
 - name: Download Metricbeat

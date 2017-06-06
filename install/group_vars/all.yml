@@ -18,3 +18,7 @@ jupyter_user: jupyter
 jupyter_group: jupyter
 jupyter_root: /etc/jupyter
 jupyter_notebooks: /etc/jupyter/notebooks
+
+remote_user: jvandevelde
+docker_user: docker
+docker_user_pw: admin

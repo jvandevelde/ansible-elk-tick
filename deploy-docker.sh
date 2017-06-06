@@ -1,0 +1,1 @@
+ansible-playbook -i hosts install/deploy-docker.yml --ask-become-pass

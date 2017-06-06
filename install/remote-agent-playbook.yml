@@ -11,7 +11,7 @@
         state: present
   roles:
     - { role: elk-metricbeat.arm }
-    #- { role: elk-filebeat }
+    - { role: elk-filebeat.arm }
     - { role: ossec-local }
     
     

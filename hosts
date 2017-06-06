@@ -4,5 +4,8 @@ elk1        ansible_connection=ssh      ansible_user=jvandevelde    ansible_pyth
 [monitored]
 odroid-jessie64   ansible_connection=ssh      ansible_user=jvandevelde
 
+[docker]
+elk1        ansible_connection=ssh      ansible_user=jvandevelde    ansible_python_interpreter=/usr/bin/python
+
 [not-used]
 localhost   ansible_connection=local

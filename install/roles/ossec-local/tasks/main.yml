@@ -15,6 +15,7 @@
 ##################################################################################
 # The following block installs inotify-tools from source on ARM cpus. 
 # Debian Jesse does not have it in the arm repository
+#
 # https://github.com/rvoicilas/inotify-tools/blob/master/INSTALL
 # wget http://github.com/downloads/rvoicilas/inotify-tools/inotify-tools-3.14.tar.gz && tar xvzf inotify-tools-3.14.tar.gz && rm inotify-tools-3.14.tar.gz
 ##################################################################################
@@ -23,12 +24,14 @@
     path: /var/ossec
   register: inotify_st
 
-- unarchive:
+- name: Download inotify-tools from github
+  unarchive:
     src: http://github.com/downloads/rvoicilas/inotify-tools/inotify-tools-3.14.tar.gz
     dest: /opt
     remote_src: True
   when: inotify_st.stat.exists is defined and not inotify_st.stat.exists and ansible_machine == 'aarch64'
 
+# Needed to guess ARM system type correctly. Without it, ./configure tells you to go get this
 - name: Download latest config.guess
   get_url:
     url: http://git.savannah.gnu.org/gitweb/?p=config.git;a=blob_plain;f=config.sub;hb=HEAD
@@ -36,6 +39,7 @@
     mode: 0755
   when: inotify_st.stat.exists is defined and not inotify_st.stat.exists and ansible_machine == 'aarch64'
 
+# Needed to guess ARM system type correctly. Without it, ./configure tells you to go get this
 - name: Download latest config.sub
   get_url:
     url: http://git.savannah.gnu.org/gitweb/?p=config.git;a=blob_plain;f=config.guess;hb=HEAD
@@ -69,7 +73,6 @@
     dest: /opt/ossec-hids-2.9.0/etc/preloaded-vars.conf
     force: yes
     mode: 775
-  when: ossec.stat.exists == False
 
 - name: Run unattended installation
   shell: /opt/ossec-hids-2.9.0/install.sh
@@ -81,9 +84,8 @@
     dest: /var/ossec/etc/ossec.conf
     force: yes
     mode: 640
-  when: ossec.stat.exists == False
 
-## TODO: Create systemd file?
+### TODO: Create systemd service definition?
 # https://unix.stackexchange.com/questions/200280/systemd-kills-service-immediately-after-start/200365#200365
 - name: set up rc.local to start ossec on boot
   copy:
