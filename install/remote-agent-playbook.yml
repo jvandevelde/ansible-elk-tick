@@ -1,0 +1,18 @@
+---
+- hosts: monitored
+  remote_user: jvandevelde
+  become: yes
+  become_user: root
+  pre_tasks:
+    - name: Ensure sudo is present
+      apt:
+        name: sudo
+        update_cache: yes
+        state: present
+  roles:
+    - { role: elk-metricbeat.arm }
+    #- { role: elk-filebeat }
+    - { role: ossec-local }
+    
+    
+    

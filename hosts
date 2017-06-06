@@ -1,2 +1,8 @@
-[elk]
-elk1 ansible_ssh_user=jvandevelde ansible_python_interpreter=/usr/bin/python
+[collection-server]
+elk1        ansible_connection=ssh      ansible_user=jvandevelde    ansible_python_interpreter=/usr/bin/python
+
+[monitored]
+odroid-jessie64   ansible_connection=ssh      ansible_user=jvandevelde
+
+[not-used]
+localhost   ansible_connection=local

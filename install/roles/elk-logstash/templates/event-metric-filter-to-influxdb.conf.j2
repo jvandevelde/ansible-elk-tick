@@ -17,17 +17,18 @@ output {
             host => "localhost"
             port => 8086
             db => "logstash-statistics"
-            # use_event_fields_for_data_points => true
+
             data_points => {
                 "rate1m" => "%{[events][rate_1m]}"
                 "rate15" => "%{[events][rate_15m]}"
-                "total" => "%{[events][count]}
+                "total" => "%{[events][count]}"
                 "category" => "metric"
                 "host" => "%{[host]}"
             }
             coerce_values => {
                 "rate1m" => "integer"
                 "rate15" => "integer"
+                "total" => "integer"
             }
         }
     }

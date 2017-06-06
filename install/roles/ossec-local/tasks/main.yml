@@ -1,0 +1,97 @@
+---
+# https://engineering.vena.io/2016/03/21/deploying-ossec-at-scale/
+
+- name: Ensure build dependencies are installed
+  apt: 
+    pkg: build-essential
+    state: installed
+
+- name: Ensure inotify-tools is installed on x86 systems
+  apt: 
+    pkg: inotify-tools
+    state: installed
+  when: ansible_machine != 'aarch64'
+
+##################################################################################
+# The following block installs inotify-tools from source on ARM cpus. 
+# Debian Jesse does not have it in the arm repository
+# https://github.com/rvoicilas/inotify-tools/blob/master/INSTALL
+# wget http://github.com/downloads/rvoicilas/inotify-tools/inotify-tools-3.14.tar.gz && tar xvzf inotify-tools-3.14.tar.gz && rm inotify-tools-3.14.tar.gz
+##################################################################################
+
+- stat: 
+    path: /var/ossec
+  register: inotify_st
+
+- unarchive:
+    src: http://github.com/downloads/rvoicilas/inotify-tools/inotify-tools-3.14.tar.gz
+    dest: /opt
+    remote_src: True
+  when: inotify_st.stat.exists is defined and not inotify_st.stat.exists and ansible_machine == 'aarch64'
+
+- name: Download latest config.guess
+  get_url:
+    url: http://git.savannah.gnu.org/gitweb/?p=config.git;a=blob_plain;f=config.sub;hb=HEAD
+    dest: /opt/inotify-tools-3.14
+    mode: 0755
+  when: inotify_st.stat.exists is defined and not inotify_st.stat.exists and ansible_machine == 'aarch64'
+
+- name: Download latest config.sub
+  get_url:
+    url: http://git.savannah.gnu.org/gitweb/?p=config.git;a=blob_plain;f=config.guess;hb=HEAD
+    dest: /opt/inotify-tools-3.14
+    mode: 0755
+  when: inotify_st.stat.exists is defined and not inotify_st.stat.exists and ansible_machine == 'aarch64'
+
+- name: Configure, compile & install inotify-tools
+  shell: /configure && make && make install
+  args:
+    chdir: /opt/inotify-tools-3.14
+  when: inotify_st.stat.exists is defined and not inotify_st.stat.exists and ansible_machine == 'aarch64'
+
+##################################################################################
+# End ARM install
+##################################################################################
+
+- stat: 
+    path: /var/ossec
+  register: ossec
+
+- unarchive:
+    src: https://github.com/ossec/ossec-hids/archive/2.9.0.tar.gz
+    dest: /opt
+    remote_src: True
+  when: ossec.stat.exists == False
+
+- name: Configure automated install of local mode instance 
+  template:
+    src: preloaded-vars.conf
+    dest: /opt/ossec-hids-2.9.0/etc/preloaded-vars.conf
+    force: yes
+    mode: 775
+  when: ossec.stat.exists == False
+
+- name: Run unattended installation
+  shell: /opt/ossec-hids-2.9.0/install.sh
+  when: ossec.stat.exists == False
+
+- name: Setup configuration 
+  template:
+    src: ossec.conf
+    dest: /var/ossec/etc/ossec.conf
+    force: yes
+    mode: 640
+  when: ossec.stat.exists == False
+
+## TODO: Create systemd file?
+# https://unix.stackexchange.com/questions/200280/systemd-kills-service-immediately-after-start/200365#200365
+- name: set up rc.local to start ossec on boot
+  copy:
+    src: rc.local
+    dest: /etc/rc.local
+    owner: root
+    group: root
+    mode: 0644
+
+- name: start OSSEC
+  shell: /var/ossec/bin/ossec-control restart

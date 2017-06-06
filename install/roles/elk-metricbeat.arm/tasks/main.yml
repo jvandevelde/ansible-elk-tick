@@ -1,0 +1,54 @@
+---
+# Beats for ARM are currently only available via nightly builds, not repositories
+# http://ict.renevdmark.nl/2016/07/05/elastic-beats-on-raspberry-pi/
+# Or, how to compile from source
+# https://michaelblouin.ca/blog/2016/02/05/build-and-run-beats-on-raspberry-pi/
+
+- name: Makes sure Metricbeat installation directory exists
+  file: 
+    path: /opt/metricbeat 
+    state: directory
+    mode: 0755
+
+- name: Makes sure Metricbeat config directory exists
+  file: 
+    path: /etc/metricbeat 
+    state: directory
+    mode: 0755
+
+- name: Check if Metricbeat already downloaded
+  stat: 
+    path: /opt/filebeat/metricbeat-linux-arm
+  register: metricbeat_st
+
+- name: Download Metricbeat
+  get_url:
+    url: https://beats-nightlies.s3.amazonaws.com/jenkins/metricbeat/999-a92e230427fa5e2efeae10e1662aff8fe232835b/metricbeat-linux-arm
+    dest: /opt/metricbeat/metricbeat-linux-arm
+    mode: 0555
+  when: metricbeat_st.stat.exists is defined and not metricbeat_st.stat.exists
+
+- name: Copy metricbeat configuration file
+  template:
+    src: metricbeat.yml.j2
+    dest: /etc/metricbeat/metricbeat.yml
+    owner: root
+    group: root
+    mode: 0744
+
+- name: Creating metricbeat systemd service definition
+  template:
+    src: metricbeat.service
+    dest: /lib/systemd/system/metricbeat.service
+    owner: root
+    group: root
+    mode: 0744
+
+#- name: Import the sample kibana dashboards
+#  shell: /usr/share/metricbeat/scripts/import_dashboards
+
+- name: Starting Metricbeat service
+  service:
+    name: metricbeat
+    enabled: yes
+    state: restarted

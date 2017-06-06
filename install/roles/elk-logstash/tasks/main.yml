@@ -55,6 +55,14 @@
     group: root
     mode: 0644
 
+- name: Configure OSSEC Json Alerts Filter
+  template:
+    src: ossec-json-alert-filter.conf
+    dest: /etc/logstash/conf.d/13-ossec-json-alert-filter.conf
+    owner: root
+    group: root
+    mode: 0644
+
 - name: Configure Elasticsearch output file
   template:
     src: elasticsearch-output.conf.j2
@@ -83,6 +91,23 @@
   shell: /usr/share/logstash/bin/logstash-plugin install logstash-output-influxdb
   # TODO: Change this to when the plugin isn't installed, not just when logstash isn't installed
   when: logstash_check_deb.rc == 1
+
+
+- name: Check if GeoCity DB already exists
+  stat: 
+    path: /etc/logstash/GeoLite2-City.mmdb
+  register: geolitecity_st
+
+- name: Download and unpack Maxmind GeoCity DB
+  get_url:
+    url: http://geolite.maxmind.com/download/geoip/database/GeoLite2-City.tar.gz
+    dest: /tmp/GeoLite2-City.tar.gz
+    mode: 0440
+  when: geolitecity_st.stat.exists is defined and not geolitecity_st.stat.exists
+
+- name: Unpack GeoLite database
+  shell: "tar xvzf /tmp/GeoLite2-City.tar.gz -C /etc/logstash && mv /etc/logstash/GeoLite2-City_*/GeoLite2-City.mmdb /etc/logstash/ && chmod 0444 /etc/logstash/GeoLite2-City.mmdb"
+  when: geolitecity_st.stat.exists is defined and not geolitecity_st.stat.exists
 
 - name: Start Logstash service
   systemd:
